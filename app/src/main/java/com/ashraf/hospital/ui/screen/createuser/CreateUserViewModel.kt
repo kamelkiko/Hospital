@@ -1,6 +1,7 @@
 package com.ashraf.hospital.ui.screen.createuser
 
 import com.ashraf.hospital.data.repository.dto.CreateUserDto
+import com.ashraf.hospital.domain.model.User
 import com.ashraf.hospital.domain.usecase.ManageAuthUseCase
 import com.ashraf.hospital.ui.base.BaseViewModel
 import com.ashraf.hospital.ui.base.ErrorUiState
@@ -11,7 +12,7 @@ import javax.inject.Inject
 class CreateUserViewModel @Inject constructor(
     private val manageAuth: ManageAuthUseCase,
 ) :
-    BaseViewModel<CreateUserUiState, Nothing>(CreateUserUiState()),
+    BaseViewModel<CreateUserUiState, CreateUserEffect>(CreateUserUiState()),
     CreateUserInteractionListener {
     override fun onClickCreateUser() {
         updateState {
@@ -41,9 +42,13 @@ class CreateUserViewModel @Inject constructor(
                     )
                 )
             },
-            onSuccess = {},
+            onSuccess = ::onSuccess,
             onError = ::onFailed,
         )
+    }
+
+    private fun onSuccess(user: User) {
+        sendNewEffect(CreateUserEffect.Back)
     }
 
     private fun onFailed(errorUiState: ErrorUiState) {

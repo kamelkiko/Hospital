@@ -48,6 +48,7 @@ import com.ashraf.hospital.ui.screen.util.Rule
 import com.ashraf.hospital.ui.screen.util.Status
 import com.ashraf.hospital.ui.theme.ContentSecondary
 import com.ashraf.hospital.ui.theme.White
+import com.ashraf.hospital.ui.util.EventHandler
 import com.ashraf.hospital.ui.util.LocalNavigationProvider
 
 @Composable
@@ -55,6 +56,16 @@ fun CreateUserScreen(viewModel: CreateUserViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
     CreateUserContent(state = state, interaction = viewModel as CreateUserInteractionListener)
+    EventHandler(effects = viewModel.effect) { effect, nav ->
+        when (effect) {
+            CreateUserEffect.Back -> {
+                Toast.makeText(context, "User has been created", Toast.LENGTH_SHORT).show()
+                nav.popBackStack()
+            }
+
+            else -> {}
+        }
+    }
     LaunchedEffect(state.errorMessage) {
         if (state.errorMessage.isNotEmpty())
             Toast.makeText(context, state.errorMessage, Toast.LENGTH_SHORT).show()
@@ -66,7 +77,6 @@ private fun CreateUserContent(
     state: CreateUserUiState,
     interaction: CreateUserInteractionListener
 ) {
-    val context = LocalContext.current
     val navController = LocalNavigationProvider.current
     var date by remember { mutableStateOf("") }
     ColorBackground(color = White) {
@@ -191,9 +201,7 @@ private fun CreateUserContent(
             PrimaryButton(
                 text = stringResource(R.string.create_user),
                 onClick = {
-                    Toast.makeText(context, "User has been created", Toast.LENGTH_SHORT).show()
                     interaction.onClickCreateUser()
-                    navController.popBackStack()
                 }
             )
         }
