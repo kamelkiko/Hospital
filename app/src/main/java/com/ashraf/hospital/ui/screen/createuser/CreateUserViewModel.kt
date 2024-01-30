@@ -26,7 +26,7 @@ class CreateUserViewModel @Inject constructor(
     private fun createUser() {
         tryToExecute(
             function = {
-                manageAuth.register(
+                manageAuth.createUser(
                     CreateUserDto(
                         firstName = state.value.user.firstName,
                         lastName = state.value.user.lastName,
